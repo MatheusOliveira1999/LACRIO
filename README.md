@@ -1,2 +1,2 @@
 # LACRIO
- Desenvolvimento de uma ferramenta para melhorar dados climáticos de modelos e de reanálises globais
+ Desenvolvimento de uma ferramenta automatizada para melhorar dados climáticos gerados por modelos númericos e reanálise globais
