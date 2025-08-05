@@ -18,7 +18,6 @@ Um sistema avançado para aprimorar dados climáticos de baixa resolução usand
 - [Resultados e Visualizações](#-resultados-e-visualizações)
 - [Exemplos](#-exemplos)
 - [Troubleshooting](#-troubleshooting)
-- [Contribuição](#-contribuição)
 - [Licença](#-licença)
 
 ## 🚀 Características
