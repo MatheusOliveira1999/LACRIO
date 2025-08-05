@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interface de Processamento de Dados</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f4f4f4; margin: 0; padding: 20px; }
+        .container { max-width: 700px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h1 { color: #2c3e50; text-align: center; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
+        input[type="text"], input[type="number"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        .btn { display: block; width: 100%; background-color: #3498db; color: white; padding: 12px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: bold; transition: background-color 0.3s ease; }
+        .btn:hover { background-color: #2980b9; }
+        .alert { padding: 15px; margin-top: 20px; border-radius: 4px; border: 1px solid transparent; }
+        .alert-success { color: #155724; background-color: #d4edda; border-color: #c3e6cb; }
+        .alert-danger { color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; }
+        .alert-info { color: #0c5460; background-color: #d1ecf1; border-color: #bee5eb; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Processamento de Dados ERA & Estação</h1>
+        <form action="/" method="POST">
+            <div class="form-group">
+                <label for="era5_dir">Caminho para a pasta ERA5:</label>
+                <input type="text" id="era5_dir" name="era5_dir" required>
+            </div>
+            <div class="form-group">
+                <label for="era5_land_dir">Caminho para a pasta ERA5-Land:</label>
+                <input type="text" id="era5_land_dir" name="era5_land_dir" required>
+            </div>
+            <div class="form-group">
+                <label for="station_file">Caminho para o arquivo da Estação (.csv):</label>
+                <input type="text" id="station_file" name="station_file" required>
+            </div>
+            <div class="form-group">
+                <label for="lat">Latitude:</label>
+                <input type="number" step="any" id="lat" name="lat" required>
+            </div>
+            <div class="form-group">
+                <label for="lon">Longitude:</label>
+                <input type="number" step="any" id="lon" name="lon" required>
+            </div>
+            <button type="submit" class="btn">Iniciar Processamento</button>
+        </form>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+</body>
+</html>

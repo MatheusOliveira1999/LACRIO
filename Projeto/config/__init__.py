@@ -1,0 +1,2 @@
+"""Configurações"""
+from .settings import *
