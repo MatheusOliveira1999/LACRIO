@@ -260,40 +260,6 @@ Cria 80+ features derivadas:
 | Random Forest | 0.882 | 0.466 | 0.685 |
 | XGBoost | 0.888 | 0.457 | 0.677 |
 
-## 🌐 API e Endpoints
-
-### Interface Web
-
-#### `POST /upload`
-Upload de arquivos e configuração inicial:
-```json
-{
-  "latitude": -9.41,
-  "longitude": -77.35,
-  "split_date": "2018-01-01"
-}
-```
-
-#### `POST /process`
-Execução do processamento:
-```json
-{
-  "models": ["RandomForest", "XGBoost", "MLP"],
-  "variables": ["temperature", "precipitation"],
-  "use_ensemble": true,
-  "optimize_params": true,
-  "optimization_config": {
-    "cv_folds": 3,
-    "random_search_iter": 30
-  }
-}
-```
-
-#### `GET /download_results`
-Download dos resultados em ZIP contendo:
-- Relatórios detalhados (.txt)
-- Gráficos de análise (.png)
-- Métricas de performance
 
 ## 📊 Resultados
 
@@ -344,7 +310,6 @@ Download dos resultados em ZIP contendo:
 - **Previsão Sazonal**: Projeções de médio prazo
 - **Estudos de Impacto**: Avaliação de vulnerabilidades
 - **Planejamento Urbano**: Adaptação às mudanças climáticas
-- **Energia Renovável**: Potencial solar/eólico
 
 ## 🛠 Desenvolvimento
 
@@ -417,33 +382,10 @@ def create_nova_feature(self, data):
 - [ ] Monitoramento de performance
 - [ ] Versionamento de modelos
 
-## 🤝 Contribuição
-
-Contribuições são bem-vindas! Por favor:
-
-1. Faça um fork do projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/nova-feature`)
-3. Commit suas mudanças (`git commit -am 'Adiciona nova feature'`)
-4. Push para a branch (`git push origin feature/nova-feature`)
-5. Abra um Pull Request
-
-### Diretrizes
-- Siga PEP 8 para Python
-- Adicione testes para novas funcionalidades
-- Documente adequadamente o código
-- Atualize o README se necessário
-
 ## 📄 Licença
 
 Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para detalhes.
 
-## 📞 Contato
-
-- **Projeto**: Sistema de Downscaling Climático
-- **Repositório**: [GitHub](https://github.com/seu-usuario/projeto-downscaling)
-- **Issues**: [Relatórios de Bug](https://github.com/seu-usuario/projeto-downscaling/issues)
-
----
 
 ## 🙏 Agradecimentos
 
