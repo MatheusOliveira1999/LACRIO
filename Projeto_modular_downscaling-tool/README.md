@@ -12,9 +12,7 @@ Um sistema avançado para downscaling estatístico de dados climáticos usando t
 - [Uso](#uso)
 - [Arquitetura](#arquitetura)
 - [Modelos Disponíveis](#modelos-disponíveis)
-- [API e Endpoints](#api-e-endpoints)
 - [Resultados](#resultados)
-- [Contribuição](#contribuição)
 - [Licença](#licença)
 
 ## 🌍 Visão Geral
