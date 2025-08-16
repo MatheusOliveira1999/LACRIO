@@ -1,93 +1,33 @@
 ================================================================================
 RELATÓRIO DE VALIDAÇÃO DE MODELOS CLIMÁTICOS
 ================================================================================
-Data: 2025-07-30 04:54:24
+Data: 2025-08-14 01:09:02
 
-Total de modelos validados: 8
+Total de modelos validados: 2
 
-🏆 MELHOR MODELO: xgboost_temperature
-   RMSE: 0.9147
-   R²: 0.3421
-   Correlação: 0.6752
+🏆 MELHOR MODELO: ensemble_precipitation
+   RMSE: 5838.8519
+   R²: -793511282.5998
+   Correlação: 0.1463
 
 📊 RESULTADOS DETALHADOS:
 
 ensemble_precipitation:
-  ├─ RMSE: 344.9685
-  ├─ MAE: 344.9381
-  ├─ R²: -4996.5334
-  ├─ Bias: 344.9381
-  ├─ Correlação: 0.5402
-  ├─ Skill Score: -4996.5334
-  ├─ Amostras: 1678
-  └─ Features: 25 usadas, 55 faltantes
+  ├─ RMSE: 5838.8519
+  ├─ MAE: 5801.5134
+  ├─ R²: -793511282.5998
+  ├─ Bias: 5801.5134
+  ├─ Correlação: 0.1463
+  ├─ Skill Score: -793511282.5998
+  ├─ Amostras: 6710
+  └─ Features: 30 usadas, 50 faltantes
 
 ensemble_temperature:
-  ├─ RMSE: 297.4492
-  ├─ MAE: 297.4479
-  ├─ R²: -69581.3851
-  ├─ Bias: 297.4479
-  ├─ Correlação: 0.6450
-  ├─ Skill Score: -69581.3851
-  ├─ Amostras: 1678
-  └─ Features: 32 usadas, 48 faltantes
-
-mlp_precipitation:
-  ├─ RMSE: 1039.2722
-  ├─ MAE: 1039.2623
-  ├─ R²: -45357.1554
-  ├─ Bias: 1039.2623
-  ├─ Correlação: 0.4008
-  ├─ Skill Score: -45357.1554
-  ├─ Amostras: 1678
-  └─ Features: 25 usadas, 55 faltantes
-
-mlp_temperature:
-  ├─ RMSE: 893.6451
-  ├─ MAE: 893.6442
-  ├─ R²: -628062.9187
-  ├─ Bias: 893.6442
-  ├─ Correlação: 0.3786
-  ├─ Skill Score: -628062.9187
-  ├─ Amostras: 1678
-  └─ Features: 32 usadas, 48 faltantes
-
-randomforest_precipitation:
-  ├─ RMSE: 5.1205
-  ├─ MAE: 2.7236
-  ├─ R²: -0.1011
-  ├─ Bias: -2.2003
-  ├─ Correlação: 0.5828
-  ├─ Skill Score: -0.1011
-  ├─ Amostras: 1678
-  └─ Features: 25 usadas, 55 faltantes
-
-randomforest_temperature:
-  ├─ RMSE: 1.3286
-  ├─ MAE: 1.1136
-  ├─ R²: -0.3882
-  ├─ Bias: -0.9362
-  ├─ Correlação: 0.5511
-  ├─ Skill Score: -0.3882
-  ├─ Amostras: 1678
-  └─ Features: 32 usadas, 48 faltantes
-
-xgboost_precipitation:
-  ├─ RMSE: 5.1549
-  ├─ MAE: 2.7441
-  ├─ R²: -0.1159
-  ├─ Bias: -2.2477
-  ├─ Correlação: 0.6005
-  ├─ Skill Score: -0.1159
-  ├─ Amostras: 1678
-  └─ Features: 25 usadas, 55 faltantes
-
-xgboost_temperature:
-  ├─ RMSE: 0.9147
-  ├─ MAE: 0.7367
-  ├─ R²: 0.3421
-  ├─ Bias: -0.3641
-  ├─ Correlação: 0.6752
-  ├─ Skill Score: 0.3421
-  ├─ Amostras: 1678
-  └─ Features: 32 usadas, 48 faltantes
+  ├─ RMSE: 325413.8413
+  ├─ MAE: 322909.1241
+  ├─ R²: -7681141935.7156
+  ├─ Bias: 322909.1241
+  ├─ Correlação: 0.5757
+  ├─ Skill Score: -7681141935.7156
+  ├─ Amostras: 6710
+  └─ Features: 34 usadas, 46 faltantes

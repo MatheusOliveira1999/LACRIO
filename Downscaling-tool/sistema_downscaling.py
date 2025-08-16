@@ -3273,7 +3273,7 @@ if __name__ == "__main__":
         create_advanced_html_template()
         print("🌍 Iniciando servidor web...")
         print("Acesse: http://localhost:5000")
-        app.run(debug=True, port=5000)
+        app.run(debug=False, port=5000)
         
     else:
         # Modo standalone - exemplo

@@ -986,4 +986,4 @@ if __name__ == '__main__':
         print("Arquivo 'model_info_precipitation.json' criado.")
 
     validator.load_models()
-    app.run(debug=True)
+    app.run(debug=False)
