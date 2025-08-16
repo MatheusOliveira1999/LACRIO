@@ -70,6 +70,10 @@ tmp/
 *.local
 config.local.*
 
+# Arquivos CLAUDE.md (documentação para Claude Code)
+CLAUDE.md
+**/CLAUDE.md
+
 # Resultados e outputs
 results/
 output/
