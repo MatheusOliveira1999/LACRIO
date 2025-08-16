@@ -78,7 +78,7 @@ python run_comparison.py \
 pip install -r requirements.txt
 ```
 
-### Projeto_modular_downscaling-tool2
+### Pre_downscaling_comparison
 ```bash
 # Ativar ambiente conda
 conda activate temp-predict
