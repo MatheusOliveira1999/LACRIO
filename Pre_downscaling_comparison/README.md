@@ -1,6 +1,6 @@
 # Sistema de Comparação Pré-Downscaling
 
-Sistema completo para análise comparativa de dados climáticos ERA5 vs. estações meteorológicas, desenvolvido para executar **antes** do processo de downscaling estatístico.
+Sistema de linha de comando para análise comparativa de dados climáticos ERA5 vs. estações meteorológicas, desenvolvido para executar **antes** do processo de downscaling estatístico.
 
 ## 🎯 Objetivo
 
@@ -26,20 +26,19 @@ Analisar e comparar dados climáticos de reanálise (ERA5) com observações de 
 - Análise de bias temporal e sazonal
 - Comparações de distribuições
 - Box plots mensais e sazonais
-- Dashboard resumo com métricas principais
+- Análise de ciclo anual médio
 
 ### 📋 **Relatórios**
-- Relatório completo em Markdown e HTML
-- Resumo executivo
+- Relatório completo em Markdown
+- Resumo executivo com métricas principais
 - Recomendações para downscaling
-- Export em JSON para análises posteriores
+- Estatísticas detalhadas por variável
 
-### 🌐 **Interface Web**
-- Upload intuitivo de arquivos
-- Configuração de parâmetros via interface
-- Visualização de resultados em tempo real
-- Download completo de resultados
-- Integração automática com sistema de downscaling
+### 💻 **Interface CLI**
+- Interface de linha de comando robusta
+- Processamento automatizado de dados
+- Configuração flexível de parâmetros
+- Integração com outros módulos do sistema
 
 ## 🚀 Instalação e Uso
 
@@ -53,14 +52,34 @@ cd Pre_downscaling_comparison
 pip install -r requirements.txt
 ```
 
-### 2. **Execução via Interface Web**
+### 2. **Execução via CLI**
 
+#### Uso Básico
 ```bash
-# Iniciar servidor
-python src/web/app.py
+# Comparação básica
+python run_comparison.py \
+    --era5 dados_era5.csv \
+    --station dados_estacao.csv \
+    --station-name "Llanganuco"
+```
 
-# Acessar interface
-# http://localhost:5001
+#### Uso Avançado
+```bash
+# Comparação com todas as opções
+python run_comparison.py \
+    --era5 dados_era5_horario_CasaDeAgua_processado.csv \
+    --station CasaDeAgua_horario_processado.csv \
+    --station-name "CasaDeAgua" \
+    --variables temperature precipitation \
+    --time-offset 6 \
+    --generate-report \
+    --output-dir resultados \
+    --verbose
+```
+
+#### Ver Ajuda
+```bash
+python run_comparison.py --help
 ```
 
 ### 3. **Execução Programática**
