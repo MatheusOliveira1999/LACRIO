@@ -14,6 +14,12 @@ from scipy.stats import gaussian_kde
 from datetime import datetime
 from scipy import stats
 
+# Yellowbrick imports
+from yellowbrick.features import Rank2D, RadViz, FeatureImportances, RFECV
+from yellowbrick.regressor import ResidualsPlot, PredictionError, AlphaSelection
+from yellowbrick.model_selection import LearningCurve, CVScores
+from yellowbrick.target import FeatureCorrelation
+
 
 class Visualizer:
     """Classe para gerar visualizações dos resultados"""
@@ -176,6 +182,12 @@ class Visualizer:
                         print(f"  ❌ Erro ao gerar feature importance para {model_name}: {e}")
             else:
                 print("\n⚠️ Nenhum modelo baseado em árvore encontrado para feature importance")
+            
+            # ✅ ADICIONAR: Yellowbrick plots
+            try:
+                self.generate_yellowbrick_plots(save_plots)
+            except Exception as e:
+                print(f"  ❌ Erro ao gerar visualizações Yellowbrick: {e}")
             
             print(f"✅ Visualizações geradas para estação {self.station_name}!")
             if invalid_models:
@@ -1062,3 +1074,495 @@ class Visualizer:
     def _get_unit(self):
         """Retorna a unidade de medida"""
         return '°C' if self.variable == 'temperature' else 'mm'
+
+    # ========================= YELLOWBRICK METHODS =========================
+    
+    def generate_yellowbrick_plots(self, save_plots=True):
+        """Gera todas as visualizações Yellowbrick disponíveis"""
+        print("🔍 Gerando visualizações Yellowbrick...")
+        
+        yellowbrick_methods = [
+            'plot_rank2d',
+            'plot_radviz',
+            'plot_feature_correlation',
+            'plot_residuals_yellowbrick',
+            'plot_prediction_error',
+            'plot_alpha_selection',
+            'plot_feature_importances_yellowbrick',
+            'plot_learning_curve',
+            'plot_cv_scores',
+            'plot_rfecv_yellowbrick'
+        ]
+        
+        for method_name in yellowbrick_methods:
+            try:
+                if hasattr(self, method_name):
+                    print(f"  Gerando {method_name}...")
+                    method = getattr(self, method_name)
+                    method(save_plot=save_plots)
+            except Exception as e:
+                print(f"  ❌ Erro em {method_name}: {e}")
+
+    def plot_rank2d(self, save_plot=True):
+        """Gera matriz de correlação usando Yellowbrick Rank2D"""
+        try:
+            if not hasattr(self.model, 'X_train') or self.model.X_train is None:
+                print("  ⚠️  Dados de treino não disponíveis para Rank2D")
+                return
+                
+            fig, ax = plt.subplots(figsize=(12, 10))
+            
+            # Limitar features para visualização
+            X_sample = self.model.X_train.iloc[:, :20] if self.model.X_train.shape[1] > 20 else self.model.X_train
+            
+            visualizer = Rank2D(algorithm='pearson', ax=ax)
+            visualizer.fit(X_sample)
+            visualizer.show()
+            
+            plt.title(f'Matriz de Correlação - {self.variable.title()}', fontsize=14, fontweight='bold')
+            plt.tight_layout()
+            
+            if save_plot:
+                output_dir = self._get_station_output_dir()
+                filename = os.path.join(output_dir, f'yellowbrick_rank2d_{self.variable}.png')
+                plt.savefig(filename, dpi=300, bbox_inches='tight', facecolor='white')
+                print(f"    ✅ Rank2D Yellowbrick salvo: {filename}")
+            
+            plt.close()
+            
+        except Exception as e:
+            print(f"    ❌ Erro no Rank2D: {e}")
+
+    def plot_radviz(self, save_plot=True):
+        """Gera visualização radial usando Yellowbrick RadViz"""
+        try:
+            if not hasattr(self.model, 'X_train') or self.model.X_train is None:
+                print("  ⚠️  Dados de treino não disponíveis para RadViz")
+                return
+                
+            fig, ax = plt.subplots(figsize=(10, 10))
+            
+            # Limitar features e amostras para visualização
+            n_samples = min(1000, len(self.model.X_train))
+            n_features = min(10, self.model.X_train.shape[1])
+            
+            X_sample = self.model.X_train.iloc[:n_samples, :n_features]
+            y_sample = self.model.y_train[:n_samples] if hasattr(self.model, 'y_train') else None
+            
+            if y_sample is not None:
+                visualizer = RadViz(ax=ax)
+                visualizer.fit(X_sample, y_sample)
+                visualizer.show()
+                
+                plt.title(f'RadViz - {self.variable.title()}', fontsize=14, fontweight='bold')
+                plt.tight_layout()
+                
+                if save_plot:
+                    output_dir = self._get_station_output_dir()
+                    filename = os.path.join(output_dir, f'yellowbrick_radviz_{self.variable}.png')
+                    plt.savefig(filename, dpi=300, bbox_inches='tight', facecolor='white')
+                    print(f"    ✅ RadViz Yellowbrick salvo: {filename}")
+            
+            plt.close()
+            
+        except Exception as e:
+            print(f"    ❌ Erro no RadViz: {e}")
+
+    def plot_residuals_yellowbrick(self, save_plot=True):
+        """Gera análise de resíduos usando Yellowbrick para todos os modelos"""
+        try:
+            if not self.results:
+                print("  ⚠️  Resultados não disponíveis para análise de resíduos")
+                return
+                
+            if not hasattr(self.model, 'X_train') or not hasattr(self.model, 'X_test'):
+                print("  ⚠️  Dados de treino/teste não disponíveis")
+                return
+                
+            # Gerar para todos os modelos
+            for model_name in self.results.keys():
+                try:
+                    if model_name not in self.model.models:
+                        print(f"  ⚠️  Modelo {model_name} não encontrado nos modelos carregados")
+                        continue
+                        
+                    model = self.model.models[model_name]
+                    
+                    # Tratamento especial para VotingRegressor (Ensemble)
+                    from sklearn.ensemble import VotingRegressor
+                    if isinstance(model, VotingRegressor):
+                        print(f"  ⚠️  Pulando {model_name} (VotingRegressor não totalmente compatível com ResidualsPlot)")
+                        continue
+                    
+                    fig, ax = plt.subplots(figsize=(10, 8))
+                    
+                    visualizer = ResidualsPlot(model, ax=ax)
+                    visualizer.fit(self.model.X_train, self.model.y_train)
+                    visualizer.score(self.model.X_test, self.model.y_test)
+                    visualizer.show()
+                    
+                    plt.title(f'Análise de Resíduos Yellowbrick - {model_name} - {self.variable.title()}', 
+                             fontsize=14, fontweight='bold')
+                    plt.tight_layout()
+                    
+                    if save_plot:
+                        output_dir = self._get_station_output_dir()
+                        model_clean = model_name.lower().replace(' ', '_')
+                        filename = os.path.join(output_dir, f'yellowbrick_residuals_{self.variable}_{model_clean}.png')
+                        plt.savefig(filename, dpi=300, bbox_inches='tight', facecolor='white')
+                        print(f"    ✅ Análise de Resíduos Yellowbrick salva: {model_name} -> {filename}")
+                    
+                    plt.close()
+                    
+                except Exception as model_error:
+                    print(f"    ❌ Erro na análise de resíduos para {model_name}: {model_error}")
+            
+        except Exception as e:
+            print(f"    ❌ Erro geral na análise de resíduos: {e}")
+
+    def plot_prediction_error(self, save_plot=True):
+        """Gera gráfico de erro de predição usando Yellowbrick para todos os modelos"""
+        try:
+            if not self.results:
+                print("  ⚠️  Resultados não disponíveis para erro de predição")
+                return
+                
+            if not hasattr(self.model, 'X_train') or not hasattr(self.model, 'X_test'):
+                print("  ⚠️  Dados de treino/teste não disponíveis")
+                return
+                
+            # Gerar para todos os modelos
+            for model_name in self.results.keys():
+                try:
+                    if model_name not in self.model.models:
+                        print(f"  ⚠️  Modelo {model_name} não encontrado nos modelos carregados")
+                        continue
+                        
+                    model = self.model.models[model_name]
+                    
+                    # Tratamento especial para VotingRegressor (Ensemble)
+                    from sklearn.ensemble import VotingRegressor
+                    if isinstance(model, VotingRegressor):
+                        print(f"  ⚠️  Pulando {model_name} (VotingRegressor não totalmente compatível com PredictionError)")
+                        continue
+                    
+                    fig, ax = plt.subplots(figsize=(10, 8))
+                    
+                    visualizer = PredictionError(model, ax=ax)
+                    visualizer.fit(self.model.X_train, self.model.y_train)
+                    visualizer.score(self.model.X_test, self.model.y_test)
+                    visualizer.show()
+                    
+                    plt.title(f'Erro de Predição Yellowbrick - {model_name} - {self.variable.title()}', 
+                             fontsize=14, fontweight='bold')
+                    plt.tight_layout()
+                    
+                    if save_plot:
+                        output_dir = self._get_station_output_dir()
+                        model_clean = model_name.lower().replace(' ', '_')
+                        filename = os.path.join(output_dir, f'yellowbrick_prediction_error_{self.variable}_{model_clean}.png')
+                        plt.savefig(filename, dpi=300, bbox_inches='tight', facecolor='white')
+                        print(f"    ✅ Erro de Predição Yellowbrick salvo: {model_name} -> {filename}")
+                    
+                    plt.close()
+                    
+                except Exception as model_error:
+                    print(f"    ❌ Erro no prediction error para {model_name}: {model_error}")
+            
+        except Exception as e:
+            print(f"    ❌ Erro geral no prediction error: {e}")
+
+    def plot_learning_curve(self, save_plot=True):
+        """Gera curva de aprendizado usando Yellowbrick para todos os modelos"""
+        try:
+            if not hasattr(self.model, 'X_train') or self.model.X_train is None:
+                print("  ⚠️  Dados de treino não disponíveis para curva de aprendizado")
+                return
+                
+            if not self.results:
+                print("  ⚠️  Resultados não disponíveis")
+                return
+                
+            if not hasattr(self.model, 'y_train'):
+                print("  ⚠️  Dados de target de treino não disponíveis")
+                return
+                
+            # Usar um subset menor para acelerar o cálculo
+            n_samples = min(500, len(self.model.X_train))
+            X_subset = self.model.X_train.iloc[:n_samples]
+            y_subset = self.model.y_train[:n_samples]
+                
+            # Gerar para todos os modelos
+            for model_name in self.results.keys():
+                try:
+                    if model_name not in self.model.models:
+                        print(f"  ⚠️  Modelo {model_name} não encontrado nos modelos carregados")
+                        continue
+                        
+                    model = self.model.models[model_name]
+                    
+                    # Tratamento especial para VotingRegressor (Ensemble)
+                    from sklearn.ensemble import VotingRegressor
+                    if isinstance(model, VotingRegressor):
+                        print(f"  ⚠️  Pulando {model_name} (VotingRegressor não totalmente compatível com LearningCurve)")
+                        continue
+                    
+                    fig, ax = plt.subplots(figsize=(10, 8))
+                    
+                    visualizer = LearningCurve(model, ax=ax, cv=3)
+                    visualizer.fit(X_subset, y_subset)
+                    visualizer.show()
+                    
+                    plt.title(f'Curva de Aprendizado Yellowbrick - {model_name} - {self.variable.title()}', 
+                             fontsize=14, fontweight='bold')
+                    plt.tight_layout()
+                    
+                    if save_plot:
+                        output_dir = self._get_station_output_dir()
+                        model_clean = model_name.lower().replace(' ', '_')
+                        filename = os.path.join(output_dir, f'yellowbrick_learning_curve_{self.variable}_{model_clean}.png')
+                        plt.savefig(filename, dpi=300, bbox_inches='tight', facecolor='white')
+                        print(f"    ✅ Curva de Aprendizado Yellowbrick salva: {model_name} -> {filename}")
+                    
+                    plt.close()
+                    
+                except Exception as model_error:
+                    print(f"    ❌ Erro na curva de aprendizado para {model_name}: {model_error}")
+            
+        except Exception as e:
+            print(f"    ❌ Erro geral na curva de aprendizado: {e}")
+
+
+    def plot_rfecv_yellowbrick(self, save_plot=True):
+        """Gera gráfico RFECV usando Yellowbrick"""
+        try:
+            if not hasattr(self.model, 'X_train') or self.model.X_train is None:
+                print("  ⚠️  Dados de treino não disponíveis para RFECV")
+                return
+                
+            from sklearn.ensemble import RandomForestRegressor
+            
+            fig, ax = plt.subplots(figsize=(10, 8))
+            
+            # Usar RandomForest como estimador base
+            rf = RandomForestRegressor(n_estimators=10, random_state=42)
+            
+            # Usar um subset menor para acelerar o cálculo
+            n_samples = min(200, len(self.model.X_train))
+            n_features = min(10, self.model.X_train.shape[1])
+            
+            X_subset = self.model.X_train.iloc[:n_samples, :n_features]
+            y_subset = self.model.y_train[:n_samples] if hasattr(self.model, 'y_train') else None
+            
+            if y_subset is not None:
+                visualizer = RFECV(rf, ax=ax, cv=3)
+                visualizer.fit(X_subset, y_subset)
+                visualizer.show()
+                
+                plt.title(f'RFECV - Seleção de Features - {self.variable.title()}', 
+                         fontsize=14, fontweight='bold')
+                plt.tight_layout()
+                
+                if save_plot:
+                    output_dir = self._get_station_output_dir()
+                    filename = os.path.join(output_dir, f'yellowbrick_rfecv_{self.variable}.png')
+                    plt.savefig(filename, dpi=300, bbox_inches='tight', facecolor='white')
+                    print(f"    ✅ RFECV Yellowbrick salvo: {filename}")
+            
+            plt.close()
+            
+        except Exception as e:
+            print(f"    ❌ Erro no RFECV: {e}")
+
+    def plot_feature_correlation(self, save_plot=True):
+        """Gera correlação entre features e target usando Yellowbrick FeatureCorrelation"""
+        try:
+            if not hasattr(self.model, 'X_train') or self.model.X_train is None:
+                print("  ⚠️  Dados de treino não disponíveis para Feature Correlation")
+                return
+                
+            if not hasattr(self.model, 'y_train') or self.model.y_train is None:
+                print("  ⚠️  Target de treino não disponível para Feature Correlation")
+                return
+                
+            fig, ax = plt.subplots(figsize=(12, 8))
+            
+            # Limitar features para visualização
+            n_features = min(15, self.model.X_train.shape[1])
+            X_sample = self.model.X_train.iloc[:, :n_features]
+            
+            visualizer = FeatureCorrelation(ax=ax, method='pearson')
+            visualizer.fit(X_sample, self.model.y_train)
+            visualizer.show()
+            
+            plt.title(f'Correlação Features-Target - {self.variable.title()}', fontsize=14, fontweight='bold')
+            plt.tight_layout()
+            
+            if save_plot:
+                output_dir = self._get_station_output_dir()
+                filename = os.path.join(output_dir, f'yellowbrick_feature_correlation_{self.variable}.png')
+                plt.savefig(filename, dpi=300, bbox_inches='tight', facecolor='white')
+                print(f"    ✅ Feature Correlation Yellowbrick salvo: {filename}")
+            
+            plt.close()
+            
+        except Exception as e:
+            print(f"    ❌ Erro no Feature Correlation: {e}")
+
+    def plot_alpha_selection(self, save_plot=True):
+        """Gera seleção de alpha para modelos Ridge/Lasso usando Yellowbrick"""
+        try:
+            if not hasattr(self.model, 'X_train') or self.model.X_train is None:
+                print("  ⚠️  Dados de treino não disponíveis para Alpha Selection")
+                return
+                
+            if not hasattr(self.model, 'y_train') or self.model.y_train is None:
+                print("  ⚠️  Target de treino não disponível para Alpha Selection")
+                return
+                
+            from sklearn.linear_model import Ridge, Lasso
+            
+            # Testar Ridge e Lasso
+            for model_type, model_class in [('Ridge', Ridge), ('Lasso', Lasso)]:
+                try:
+                    fig, ax = plt.subplots(figsize=(10, 8))
+                    
+                    model = model_class()
+                    visualizer = AlphaSelection(model, ax=ax)
+                    visualizer.fit(self.model.X_train, self.model.y_train)
+                    visualizer.show()
+                    
+                    plt.title(f'Alpha Selection {model_type} - {self.variable.title()}', fontsize=14, fontweight='bold')
+                    plt.tight_layout()
+                    
+                    if save_plot:
+                        output_dir = self._get_station_output_dir()
+                        filename = os.path.join(output_dir, f'yellowbrick_alpha_selection_{model_type.lower()}_{self.variable}.png')
+                        plt.savefig(filename, dpi=300, bbox_inches='tight', facecolor='white')
+                        print(f"    ✅ Alpha Selection {model_type} Yellowbrick salvo: {filename}")
+                    
+                    plt.close()
+                    
+                except Exception as model_error:
+                    print(f"    ❌ Erro no Alpha Selection {model_type}: {model_error}")
+                    
+        except Exception as e:
+            print(f"    ❌ Erro geral no Alpha Selection: {e}")
+
+    def plot_feature_importances_yellowbrick(self, save_plot=True):
+        """Gera importância de features usando Yellowbrick FeatureImportances"""
+        try:
+            if not hasattr(self.model, 'X_train') or self.model.X_train is None:
+                print("  ⚠️  Dados de treino não disponíveis para Feature Importances")
+                return
+                
+            if not hasattr(self.model, 'y_train') or self.model.y_train is None:
+                print("  ⚠️  Target de treino não disponível para Feature Importances")
+                return
+                
+            # Modelos baseados em árvore para feature importance
+            tree_models = ['RandomForest', 'ExtraTrees', 'XGBoost', 'GradientBoosting']
+            
+            for model_name in self.results.keys():
+                if any(tree_model in model_name for tree_model in tree_models):
+                    try:
+                        if model_name not in self.model.models:
+                            continue
+                            
+                        model = self.model.models[model_name]
+                        
+                        # Extrair modelo base se for pipeline
+                        if hasattr(model, 'named_steps') and 'model' in model.named_steps:
+                            base_model = model.named_steps['model']
+                        else:
+                            base_model = model
+                            
+                        if hasattr(base_model, 'feature_importances_'):
+                            fig, ax = plt.subplots(figsize=(10, 8))
+                            
+                            # Usar um subset menor para melhor visualização
+                            n_features = min(20, self.model.X_train.shape[1])
+                            X_subset = self.model.X_train.iloc[:, :n_features]
+                            
+                            visualizer = FeatureImportances(base_model, ax=ax)
+                            visualizer.fit(X_subset, self.model.y_train)
+                            visualizer.show()
+                            
+                            plt.title(f'Feature Importances Yellowbrick - {model_name} - {self.variable.title()}', 
+                                     fontsize=14, fontweight='bold')
+                            plt.tight_layout()
+                            
+                            if save_plot:
+                                output_dir = self._get_station_output_dir()
+                                model_clean = model_name.lower().replace(' ', '_')
+                                filename = os.path.join(output_dir, f'yellowbrick_feature_importances_{self.variable}_{model_clean}.png')
+                                plt.savefig(filename, dpi=300, bbox_inches='tight', facecolor='white')
+                                print(f"    ✅ Feature Importances Yellowbrick salvo: {model_name} -> {filename}")
+                            
+                            plt.close()
+                            
+                    except Exception as model_error:
+                        print(f"    ❌ Erro no Feature Importances para {model_name}: {model_error}")
+                        
+        except Exception as e:
+            print(f"    ❌ Erro geral no Feature Importances: {e}")
+
+    def plot_cv_scores(self, save_plot=True):
+        """Gera validação cruzada usando Yellowbrick CVScores"""
+        try:
+            if not hasattr(self.model, 'X_train') or self.model.X_train is None:
+                print("  ⚠️  Dados de treino não disponíveis para CV Scores")
+                return
+                
+            if not hasattr(self.model, 'y_train') or self.model.y_train is None:
+                print("  ⚠️  Target de treino não disponível para CV Scores")
+                return
+                
+            # Usar um subset menor para acelerar o cálculo
+            n_samples = min(300, len(self.model.X_train))
+            X_subset = self.model.X_train.iloc[:n_samples]
+            y_subset = self.model.y_train[:n_samples]
+                
+            # Gerar para modelos selecionados (evitar Ensemble por compatibilidade)
+            selected_models = [name for name in self.results.keys() 
+                             if 'Ensemble' not in name and 'VotingRegressor' not in name][:3]
+                
+            for model_name in selected_models:
+                try:
+                    if model_name not in self.model.models:
+                        continue
+                        
+                    model = self.model.models[model_name]
+                    
+                    # Tratamento especial para VotingRegressor (Ensemble)
+                    from sklearn.ensemble import VotingRegressor
+                    if isinstance(model, VotingRegressor):
+                        continue
+                    
+                    fig, ax = plt.subplots(figsize=(10, 8))
+                    
+                    visualizer = CVScores(model, ax=ax, cv=3, scoring='r2')
+                    visualizer.fit(X_subset, y_subset)
+                    visualizer.show()
+                    
+                    plt.title(f'Cross Validation Scores - {model_name} - {self.variable.title()}', 
+                             fontsize=14, fontweight='bold')
+                    plt.tight_layout()
+                    
+                    if save_plot:
+                        output_dir = self._get_station_output_dir()
+                        model_clean = model_name.lower().replace(' ', '_')
+                        filename = os.path.join(output_dir, f'yellowbrick_cv_scores_{self.variable}_{model_clean}.png')
+                        plt.savefig(filename, dpi=300, bbox_inches='tight', facecolor='white')
+                        print(f"    ✅ CV Scores Yellowbrick salvo: {model_name} -> {filename}")
+                    
+                    plt.close()
+                    
+                except Exception as model_error:
+                    print(f"    ❌ Erro no CV Scores para {model_name}: {model_error}")
+                    
+        except Exception as e:
+            print(f"    ❌ Erro geral no CV Scores: {e}")
+
+
+
