@@ -83,4 +83,6 @@ outputs/
 *.jpeg
 *.gif
 *.svg
-!static/img/
+!Pre_downscaling_comparison/static/img/**
+!Downscaling-tool/static/img/**
+!Downscaling-tool/Atualização/**
