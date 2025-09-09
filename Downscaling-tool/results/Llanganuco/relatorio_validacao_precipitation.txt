@@ -1,0 +1,22 @@
+================================================================================
+RELATÓRIO DE VALIDAÇÃO DE DOWNSCALING
+================================================================================
+Resolução temporal: diaria
+Vazamento temporal detectado: NÃO
+Overfitting extremo: NÃO
+
+AUTOCORRELAÇÃO:
+  lag_1h: 0.4042
+  lag_6h: 0.2108
+  lag_12h: 0.1900
+  lag_24h: 0.1630
+  lag_48h: 0.0915
+  lag_168h: -0.0163
+
+QUALIDADE DOS DADOS:
+  Registros totais: 2793
+  Registros válidos: 2793
+  Taxa de completude: 100.0%
+
+RECOMENDAÇÕES:
+================================================================================

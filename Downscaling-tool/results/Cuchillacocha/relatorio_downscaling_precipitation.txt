@@ -1,0 +1,150 @@
+================================================================================
+RELATÓRIO DE DOWNSCALING CLIMÁTICO - PRECIPITATION
+================================================================================
+Data de geração: 2025-08-14 00:05:37
+
+📊 INFORMAÇÕES DOS DADOS:
+   • Total de registros: 9808
+   • Features utilizadas: 8563
+   • Dados de treino: 5261
+   • Dados de teste: 3302
+   • Período de teste: 2018-01-01 a 2020-04-06
+
+⚙️ CONFIGURAÇÕES:
+   • optimize_hyperparams: False
+   • feature_selection: True
+   • max_features: 80
+   • ensemble_size: 3
+   • temporal_resolution: hourly
+   • optimize_all_models: False
+   • fast_optimization: False
+   • use_random_search: False
+   • random_search_iter: 30
+   • cv_folds: 4
+   • show_top_params: False
+   • verbose: False
+   • test_size: 0.2
+   • random_state: 42
+   • use_optuna: False
+
+🎯 RESULTADOS DOS MODELOS:
+------------------------------------------------------------
+
+1. ExtraTrees
+   ├─ RMSE: 0.1969 mm
+   ├─ MAE: 0.0834 mm
+   ├─ R²: 0.1060
+   ├─ Correlação: 0.3418
+   ├─ Bias: -0.0095 mm
+   ├─ Skill Score: 0.1060
+   ├─ Detecção de Chuva: 83.3%
+   ├─ POD: 0.420
+   ├─ FAR: 0.654
+   └─ R² (dias com chuva): -0.9218
+
+2. Ensemble
+   ├─ RMSE: 0.1973 mm
+   ├─ MAE: 0.0874 mm
+   ├─ R²: 0.1019
+   ├─ Correlação: 0.3286
+   ├─ Bias: -0.0056 mm
+   ├─ Skill Score: 0.1019
+   ├─ Detecção de Chuva: 81.5%
+   ├─ POD: 0.477
+   ├─ FAR: 0.677
+   └─ R² (dias com chuva): -0.9056
+
+3. RandomForest
+   ├─ RMSE: 0.1990 mm
+   ├─ MAE: 0.0902 mm
+   ├─ R²: 0.0865
+   ├─ Correlação: 0.2961
+   ├─ Bias: 0.0020 mm
+   ├─ Skill Score: 0.0865
+   ├─ Detecção de Chuva: 78.9%
+   ├─ POD: 0.535
+   ├─ FAR: 0.705
+   └─ R² (dias com chuva): -0.8372
+
+4. Ridge
+   ├─ RMSE: 0.2002 mm
+   ├─ MAE: 0.0915 mm
+   ├─ R²: 0.0753
+   ├─ Correlação: 0.2786
+   ├─ Bias: -0.0084 mm
+   ├─ Skill Score: 0.0753
+   ├─ Detecção de Chuva: 82.0%
+   ├─ POD: 0.432
+   ├─ FAR: 0.679
+   └─ R² (dias com chuva): -0.9706
+
+5. LinearRegression
+   ├─ RMSE: 0.2003 mm
+   ├─ MAE: 0.0915 mm
+   ├─ R²: 0.0749
+   ├─ Correlação: 0.2779
+   ├─ Bias: -0.0084 mm
+   ├─ Skill Score: 0.0749
+   ├─ Detecção de Chuva: 82.1%
+   ├─ POD: 0.438
+   ├─ FAR: 0.676
+   └─ R² (dias com chuva): -0.9710
+
+6. SVR
+   ├─ RMSE: 0.2126 mm
+   ├─ MAE: 0.1380 mm
+   ├─ R²: -0.0424
+   ├─ Correlação: 0.1106
+   ├─ Bias: 0.0470 mm
+   ├─ Skill Score: -0.0424
+   ├─ Detecção de Chuva: 12.6%
+   ├─ POD: 0.995
+   ├─ FAR: 0.879
+   └─ R² (dias com chuva): -0.9241
+
+7. XGBoost
+   ├─ RMSE: 0.2186 mm
+   ├─ MAE: 0.1074 mm
+   ├─ R²: -0.1025
+   ├─ Correlação: 0.2287
+   ├─ Bias: 0.0254 mm
+   ├─ Skill Score: -0.1025
+   ├─ Detecção de Chuva: 75.7%
+   ├─ POD: 0.613
+   ├─ FAR: 0.726
+   └─ R² (dias com chuva): -0.7198
+
+8. MLP
+   ├─ RMSE: 0.2342 mm
+   ├─ MAE: 0.1433 mm
+   ├─ R²: -0.2657
+   ├─ Correlação: 0.1283
+   ├─ Bias: 0.0014 mm
+   ├─ Skill Score: -0.2657
+   ├─ Detecção de Chuva: 66.0%
+   ├─ POD: 0.527
+   ├─ FAR: 0.816
+   └─ R² (dias com chuva): -1.0002
+
+9. GradientBoosting
+   ├─ RMSE: 0.2498 mm
+   ├─ MAE: 0.1323 mm
+   ├─ R²: -0.4395
+   ├─ Correlação: 0.2106
+   ├─ Bias: 0.0565 mm
+   ├─ Skill Score: -0.4395
+   ├─ Detecção de Chuva: 70.2%
+   ├─ POD: 0.630
+   ├─ FAR: 0.769
+   └─ R² (dias com chuva): -0.6829
+
+🏆 MELHOR MODELO: ExtraTrees
+   • RMSE: 0.1969 mm
+   • R²: 0.1060
+   • Melhoria sobre climatologia: 10.6%
+
+📈 INTERPRETAÇÃO:
+   • Qualidade da predição: Baixa (R² = 0.106)
+   • O modelo é 10.6% melhor que a climatologia
+
+================================================================================

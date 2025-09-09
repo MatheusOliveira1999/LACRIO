@@ -1,0 +1,114 @@
+================================================================================
+RELATÓRIO DE DOWNSCALING CLIMÁTICO - TEMPERATURE
+================================================================================
+Data de geração: 2025-08-13 23:35:49
+
+📊 INFORMAÇÕES DOS DADOS:
+   • Total de registros: 8696
+   • Features utilizadas: 2957
+   • Dados de treino: 2057
+   • Dados de teste: 900
+   • Período de teste: 2018-01-01 a 2018-08-13
+
+⚙️ CONFIGURAÇÕES:
+   • optimize_hyperparams: False
+   • feature_selection: True
+   • max_features: 80
+   • ensemble_size: 3
+   • temporal_resolution: hourly
+   • optimize_all_models: False
+   • fast_optimization: False
+   • use_random_search: False
+   • random_search_iter: 30
+   • cv_folds: 4
+   • show_top_params: False
+   • verbose: False
+   • test_size: 0.2
+   • random_state: 42
+   • use_optuna: False
+
+🎯 RESULTADOS DOS MODELOS:
+------------------------------------------------------------
+
+1. Ensemble
+   ├─ RMSE: 1.6843 °C
+   ├─ MAE: 1.3018 °C
+   ├─ R²: 0.8605
+   ├─ Correlação: 0.9296
+   ├─ Bias: 0.0249 °C
+   └─ Skill Score: 0.8605
+
+2. RandomForest
+   ├─ RMSE: 1.7045 °C
+   ├─ MAE: 1.3110 °C
+   ├─ R²: 0.8571
+   ├─ Correlação: 0.9282
+   ├─ Bias: 0.0192 °C
+   └─ Skill Score: 0.8571
+
+3. ExtraTrees
+   ├─ RMSE: 1.7198 °C
+   ├─ MAE: 1.3337 °C
+   ├─ R²: 0.8545
+   ├─ Correlação: 0.9263
+   ├─ Bias: 0.1036 °C
+   └─ Skill Score: 0.8545
+
+4. GradientBoosting
+   ├─ RMSE: 1.7236 °C
+   ├─ MAE: 1.3315 °C
+   ├─ R²: 0.8538
+   ├─ Correlação: 0.9272
+   ├─ Bias: -0.0481 °C
+   └─ Skill Score: 0.8538
+
+5. XGBoost
+   ├─ RMSE: 1.7410 °C
+   ├─ MAE: 1.3460 °C
+   ├─ R²: 0.8509
+   ├─ Correlação: 0.9263
+   ├─ Bias: -0.1306 °C
+   └─ Skill Score: 0.8509
+
+6. LinearRegression
+   ├─ RMSE: 1.7630 °C
+   ├─ MAE: 1.3914 °C
+   ├─ R²: 0.8471
+   ├─ Correlação: 0.9235
+   ├─ Bias: -0.2997 °C
+   └─ Skill Score: 0.8471
+
+7. Ridge
+   ├─ RMSE: 1.7647 °C
+   ├─ MAE: 1.3837 °C
+   ├─ R²: 0.8468
+   ├─ Correlação: 0.9237
+   ├─ Bias: -0.3111 °C
+   └─ Skill Score: 0.8468
+
+8. MLP
+   ├─ RMSE: 1.9484 °C
+   ├─ MAE: 1.5275 °C
+   ├─ R²: 0.8132
+   ├─ Correlação: 0.9071
+   ├─ Bias: -0.1839 °C
+   └─ Skill Score: 0.8132
+
+9. SVR
+   ├─ RMSE: 2.1051 °C
+   ├─ MAE: 1.6433 °C
+   ├─ R²: 0.7820
+   ├─ Correlação: 0.8987
+   ├─ Bias: 0.2946 °C
+   └─ Skill Score: 0.7820
+
+🏆 MELHOR MODELO: Ensemble
+   • RMSE: 1.6843 °C
+   • R²: 0.8605
+   • Melhoria sobre climatologia: 86.0%
+
+📈 INTERPRETAÇÃO:
+   • Qualidade da predição: Excelente (R² = 0.860)
+   • O modelo é 86.0% melhor que a climatologia
+
+================================================================================

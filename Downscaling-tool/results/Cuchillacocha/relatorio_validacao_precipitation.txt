@@ -1,0 +1,26 @@
+================================================================================
+RELATÓRIO DE VALIDAÇÃO DE DOWNSCALING
+================================================================================
+Resolução temporal: custom_6.0h
+Vazamento temporal detectado: NÃO
+Overfitting extremo: NÃO
+
+AUTOCORRELAÇÃO:
+  lag_1h: 0.0427
+  lag_6h: 0.0032
+  lag_12h: 0.0691
+  lag_24h: 0.0665
+  lag_48h: 0.0539
+  lag_168h: 0.0488
+
+QUALIDADE DOS DADOS:
+  Registros totais: 9808
+  Registros válidos: 8731
+  Taxa de completude: 89.0%
+
+RECOMENDAÇÕES:
+  • DADOS SUB-DIÁRIOS DETECTADOS:
+  • - Usar lags ≥ 6 horas para features temporais
+  • - TimeSeriesSplit com cv_folds ≤ 4
+  • - Validação temporal rigorosa
+================================================================================
